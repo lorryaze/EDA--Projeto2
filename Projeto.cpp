@@ -68,15 +68,33 @@ int main (int argc, char *argv[]){
 	}
 	
 	
+	FILE *file;
+	char ch;
+	char frase[100];
+	
+	file = fopen(*(treina_asfalto),"r");
+	
+	if (file == NULL){
+		printf("arquivo não encontrado");
+		exit(0);
+	}
+	else{
+		printf("arquivo encontrado\n");
+		while(fgets(frase, 100, file)!=NULL)
+        {
+            printf("%s",frase);
+        }
+    }
+	
 	free(array);
 	free(sarray);
 //	free(treina_asfalto);
-	
+	fclose(file);
 	return 0;
 }
 
 int * randomizar(int n){
-	srand(time(0)); 
+	//srand(time(0)); 
 	int i;
     int * array = (int *) calloc (n, sizeof (int));
     for (i = 0; i < n; ++i) {
