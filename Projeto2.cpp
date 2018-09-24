@@ -73,6 +73,14 @@ int main (int argc, char *argv[]){
 		puts(arquivos_asfalto[i]);
 		puts(arquivos_grama[i]);
 	}
+	
+	
+//	for (i =0; i<25; i++){
+		//int random = rand()%10;
+	//	arquivos_treinamento_asfalto[i] = arquivos_asfalto[i];
+		
+//		puts(arquivos_treinamento_asfalto[i]);
+//	}
 
 	
 /*	char asfalto1[] = "DataSet\\asphalt\\asphalt_01.txt";
