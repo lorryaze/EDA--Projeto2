@@ -27,41 +27,30 @@ int main (int argc, char *argv[]){
 
 	for (i =0; i <n; i++){
 			
-			char numero[] = " ";
+			char numero[] = "  ";
 			numero[0] = ((*(array+i))/10) + '0';
 			int num = ((*(array+i))/10)*10;
 			numero[1] = ((*(array+i))-num) + '0';
 			
 			char part2[] = ".txt";
-			char part1asfalto[] = "DataSet\\asphalt\\asphalt_";
-			char part1grama[] = "DataSet\\grass\\grass_";
-			char * strcaminho_asfalto = concat(part1asfalto, numero, part2); 
+			char part1asf[] = "DataSet\\asphalt\\asphalt_";
+			char part1gram[] = "DataSet\\grass\\grass_";
+			char * strcaminho_asfalto = concat(part1asf, numero, part2); 
+			char * strcaminho_grama = concat(part1gram, numero, part2);
 			if (i <25){
 				treina_asfalto[i]=strcaminho_asfalto;
-			}
-			else{
-				teste_asfalto[i-25]=strcaminho_asfalto;
-			}
-	}
-
-	/*	for (i =0; i <n; i++){
-			
-			char numero[] = " ";
-			numero[0] = ((*(array+i))/10) + '0';
-			int num = ((*(array+i))/10)*10;
-			numero[1] = ((*(array+i))-num) + '0';
-			
-			char part2[] = ".txt";
-			char part1grama[] = "DataSet\\grass\\grass_";
-			char * strcaminho_grama = concat(part1grama, numero, part2);
-			if (i <25){
 				treina_grama[i]=strcaminho_grama;
 			}
 			else{
-				treina_grama[i-25]=strcaminho_grama;
+				teste_asfalto[i-25]=strcaminho_asfalto;
+				teste_grama[i-25]=strcaminho_grama;
 			}
-			free(strcaminho_grama);
-	}	*/
+		//	free(strcaminho_asfalto);
+		//	free(strcaminho_grama);
+	
+	}
+
+	
 	for (i =0; i<25; i++){
 		printf("%s\n", *(treina_asfalto+i));
 	}
@@ -69,10 +58,14 @@ int main (int argc, char *argv[]){
 		for (i =0; i<25; i++){
 		printf("%s\n", *(teste_asfalto+i));
 	}
-	//	printf("agr é grama treina:\n");
-	//	for (i =0; i<25; i++){
-	//	printf("%s\n", *(treina_grama+i));
-//	}
+	printf("agr e grama treina:\n");
+		for (i =0; i<25; i++){
+		printf("%s\n", *(treina_grama+i));
+	}
+	printf("agr e grama teste:\n");
+		for (i =0; i<25; i++){
+		printf("%s\n", *(teste_grama+i));
+	}
 	
 	
 	free(array);
@@ -108,3 +101,4 @@ char* concat( char *s1,  char *s2,  char *s3)
     
     return result;
 }
+
