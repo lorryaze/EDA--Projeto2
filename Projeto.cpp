@@ -29,29 +29,27 @@ int main (int argc, char *argv[]){
 			int num = ((*(array+i))/10)*10;
 			numero[1] = ((*(array+i))-num) + '0';
 			printf("%d\n", *(array+i));
-
-			char * strcaminho_asfalto = concat("DataSet\\asphalt\\asphalt_", numero, ".txt"); 
+			char part1[] = "DataSet\\asphalt\\asphalt_";
+			char part2[] = ".txt";
+			char * strcaminho_asfalto = concat(part1, numero, part2); 
 
 			treina_asfalto[i]=strcaminho_asfalto;
 		
-			puts(*(treina_asfalto+i));
-
 	}
 	
 	for (i =0; i<25; i++){
-
-		puts(*(treina_asfalto+i));
-
+		printf("%s\n", *(treina_asfalto+i));
 	}
 	
 	free(array);
 	free(sarray);
 //	free(treina_asfalto);
+	
 	return 0;
 }
 
 int * randomizar(int n){
-	//srand(time(0)); 
+	srand(time(0)); 
 	int i;
     int * array = (int *) calloc (n, sizeof (int));
     for (i = 0; i < n; ++i) {
