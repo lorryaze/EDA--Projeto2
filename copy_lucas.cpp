@@ -5,14 +5,14 @@
 #include <time.h>
 
 int * randomizar(int );
+char* concat( char *, char *s2, char *s3);
 
 int main (int argc, char *argv[]){
 	int i = 0;
 	int n = 50;
 	int *array;
 	char* sarray = (char *)calloc(n,sizeof(char));
-	char *treina_asfalto[50];
-	char strcaminho_asfalto[50];
+	char *treina_asfalto[25];
 	
 	array = randomizar(n);
 	
@@ -30,21 +30,17 @@ int main (int argc, char *argv[]){
 			numero[1] = ((*(array+i))-num) + '0';
 			printf("%d\n", *(array+i));
 
-			char part1[] = "DataSet\\asphalt\\asphalt_";
-			char part2[] = ".txt\0";
-			//concatenando strings 
-			strcpy(strcaminho_asfalto, part1); //função de copia
-			strcat(strcaminho_asfalto, numero); //concatenação
-			strcat(strcaminho_asfalto, part2); //concatenação
-			//puts(strcaminho_asfalto);
-			treina_asfalto[0]=strcaminho_asfalto;
+			char * strcaminho_asfalto = concat("DataSet\\asphalt\\asphalt_", numero, ".txt"); 
+
+			treina_asfalto[i]=strcaminho_asfalto;
 		
-			puts(*(treina_asfalto+0));
+			puts(*(treina_asfalto+i));
 
 	}
+	
 	for (i =0; i<25; i++){
 
-			puts(*(treina_asfalto+i));
+		puts(*(treina_asfalto+i));
 
 	}
 	
@@ -70,3 +66,12 @@ int * randomizar(int n){
     return array;
 }
 
+char* concat( char *s1,  char *s2,  char *s3)
+{
+    char *result = (char *)malloc(strlen(s1) + strlen(s2) + strlen(s3) +  1); // +1 for the null-terminator
+    // in real code you would check for errors in malloc here
+    strcpy(result, s1);
+    strcat(result, s2);
+    strcat(result, s3);
+    return result;
+}
