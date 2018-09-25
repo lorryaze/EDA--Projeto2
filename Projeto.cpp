@@ -73,18 +73,29 @@ int main (int argc, char *argv[]){
 	
 	file = fopen(*(treina_asfalto),"r");
 	
+    int x,linhas, colunas;
+    char y;
+    linhas = 0;
+    colunas = 1;
+
 	if (file == NULL){
 		printf("arquivo não encontrado");
 		exit(0);
 	}
 	else{
 		printf("arquivo encontrado\n");
-		while(fgets(frase, 100, file)!=NULL)
+		while(fscanf(file,"%c",&y) != EOF)
         {
-            printf("%s",frase);
+            if(linhas == 0){
+                if(y == ';')
+                    colunas ++;
+            }
+            if(y == '\n')
+                linhas++;
         }
     }
    
+    printf("Linhas: %d, Colunas: %d\n", linhas, colunas);
     puts(*treina_asfalto);	
 	free(array);
 	free(sarray);
