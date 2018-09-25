@@ -33,8 +33,8 @@ int main (int argc, char *argv[]){
 			numero[1] = ((*(array+i))-num) + '0';
 			
 			char part2[] = ".txt";
-			char part1asf[] = "DataSet\\asphalt\\asphalt_";
-			char part1gram[] = "DataSet\\grass\\grass_";
+			char part1asf[] = "DataSet/asphalt/asphalt_";
+			char part1gram[] = "DataSet/grass/grass_";
 			char * strcaminho_asfalto = concat(part1asf, numero, part2); 
 			char * strcaminho_grama = concat(part1gram, numero, part2);
 			if (i <25){
@@ -67,7 +67,6 @@ int main (int argc, char *argv[]){
 		printf("%s\n", *(teste_grama+i));
 	}
 	
-	
 	FILE *file;
 	char ch;
 	char frase[100];
@@ -85,7 +84,8 @@ int main (int argc, char *argv[]){
             printf("%s",frase);
         }
     }
-	
+   
+    puts(*treina_asfalto);	
 	free(array);
 	free(sarray);
 //	free(treina_asfalto);
@@ -119,4 +119,3 @@ char* concat( char *s1,  char *s2,  char *s3)
     
     return result;
 }
-
