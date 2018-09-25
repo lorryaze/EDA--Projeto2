@@ -7,6 +7,7 @@
 int * randomizar(int );
 char* concat( char *, char *s2, char *s3);
 void contador(FILE *, int *, int *);
+int *matrizAlocacada(FILE *, int , int );
 
 int main (int argc, char *argv[]){
 	int n = 50;
@@ -15,6 +16,7 @@ int main (int argc, char *argv[]){
 	char *teste_asfalto[25];
 	char *treina_grama[25];
 	char *teste_grama[25];
+	int *matriz;
 	int linhas = 0, colunas = 1;
 	
 	array = randomizar(n);
@@ -43,12 +45,15 @@ int main (int argc, char *argv[]){
 	
     FILE *file;
     file = fopen(*(treina_asfalto),"r");
+	
 
     contador(file, &linhas, &colunas);
 
+	matriz = matrizAlocacada(file, linhas, colunas);
+
 	printf("%d\n", linhas);
 	printf("%d\n", colunas);
-  
+	printf("%d\n", *matriz);
    
     puts(*treina_asfalto);	
 	free(array);
@@ -103,4 +108,26 @@ void contador(FILE *file, int *linhas, int *colunas){
                 *linhas += 1;
         }
     }
+}
+
+int *matrizAlocacada(FILE *file, int linhas, int colunas){
+	int n;
+	n = linhas*colunas;
+	int x;
+	char y;
+	int *matriz = (int *) calloc (n, sizeof(int));
+
+	if(matriz == NULL){
+		printf("Não foi possivel alocar matriz");
+		return 0;
+	}
+
+	for(int i=0;i <linhas; i++){
+		for(int j=0; j<colunas; j++){
+			fscanf(file,"%d%c",&x,&y);
+      		matriz[i*linhas+j] = x;
+		} 
+	}
+	
+	return matriz;
 }
