@@ -6,7 +6,7 @@
 
 int * randomizar(int );
 char* concat( char *, char *s2, char *s3);
-int *contador(FILE *file);
+void contador(FILE *, int *, int *);
 
 int main (int argc, char *argv[]){
 	int n = 50;
@@ -15,6 +15,7 @@ int main (int argc, char *argv[]){
 	char *teste_asfalto[25];
 	char *treina_grama[25];
 	char *teste_grama[25];
+	int linhas = 0, colunas = 1;
 	
 	array = randomizar(n);
 
@@ -42,12 +43,12 @@ int main (int argc, char *argv[]){
 	
     FILE *file;
     file = fopen(*(treina_asfalto),"r");
-    int *arr;
-    arr = contador(file);
+
+    contador(file, &linhas, &colunas);
+
+	printf("%d\n", linhas);
+	printf("%d\n", colunas);
   
-    for(int i = 0; i < 2; i++){
-        printf("%d\n", *(arr+i));
-    }
    
     puts(*treina_asfalto);	
 	free(array);
@@ -82,32 +83,24 @@ char* concat( char *s1,  char *s2,  char *s3)
     return result;
 }
 
-int *contador(FILE *file){
-	
-    int linhas, colunas;
+void contador(FILE *file, int *linhas, int *colunas){
     char y;
-    linhas = 0;
-    colunas = 1;
 
 	if (file == NULL){
-		printf("arquivo não encontrado");
+		printf("arquivo nao encontrado");
 		exit(0);
 	}
 	else{
 		printf("arquivo encontrado\n");
 		while(fscanf(file,"%c",&y) != EOF)
         {
-            if(linhas == 0){
-                if(y == ';')
-                    colunas ++;
+            if(*linhas == 0){
+                if(y == ';'){
+                *colunas += 1;
+				}
             }
             if(y == '\n')
-                linhas++;
+                *linhas += 1;
         }
     }
-    
-    int arr[] = {linhas, colunas};
-    int *retorno = (int *) calloc(2, sizeof(int));
-    
-    return retorno;  
 }
