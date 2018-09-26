@@ -7,7 +7,7 @@
 int * randomizar(int );
 char* concat( char *, char *s2, char *s3);
 void contador(FILE *, int *, int *);
-int *matrizAlocacada(FILE *, int , int );
+int *matrizAlocacada(char *, int , int );
 
 int main (int argc, char *argv[]){
 	int n = 50;
@@ -45,11 +45,20 @@ int main (int argc, char *argv[]){
 	
     FILE *file;
     file = fopen(*(treina_asfalto),"r");
+
+	if (file == NULL){
+		printf("arquivo nao encontrado");
+		exit(0);
+	}
+	else{
+		printf("arquivo encontrado\n");
+		contador(file, &linhas, &colunas);
+		fclose(file);
+		matriz = matrizAlocacada(*treina_asfalto, linhas, colunas);
 	
+	
+	}
 
-    contador(file, &linhas, &colunas);
-
-	matriz = matrizAlocacada(file, linhas, colunas);
 
 	printf("%d\n", linhas);
 	printf("%d\n", colunas);
@@ -57,7 +66,6 @@ int main (int argc, char *argv[]){
    
     puts(*treina_asfalto);	
 	free(array);
-    fclose(file);
 	return 0;
 }
 
@@ -91,43 +99,41 @@ char* concat( char *s1,  char *s2,  char *s3)
 void contador(FILE *file, int *linhas, int *colunas){
     char y;
 
+	
+	while(fscanf(file,"%c",&y) != EOF)
+	{
+		if(*linhas == 0){
+			if(y == ';'){
+			*colunas += 1;
+			}
+		}
+		if(y == '\n')
+			*linhas += 1;
+	}
+}
+
+int *matrizAlocacada(char *caminho, int linhas, int colunas){
+	int n;
+	n = linhas*colunas;
+	int x=0;
+	char y=0;
+	int *matriz = (int *) calloc (n, sizeof(int));
+	FILE *file;
+	file = fopen(caminho,"r");
 	if (file == NULL){
 		printf("arquivo nao encontrado");
 		exit(0);
 	}
 	else{
-		printf("arquivo encontrado\n");
-		while(fscanf(file,"%c",&y) != EOF)
-        {
-            if(*linhas == 0){
-                if(y == ';'){
-                *colunas += 1;
-				}
-            }
-            if(y == '\n')
-                *linhas += 1;
-        }
-    }
-}
-
-int *matrizAlocacada(FILE *file, int linhas, int colunas){
-	int n;
-	n = linhas*colunas;
-	int x;
-	char y;
-	int *matriz = (int *) calloc (n, sizeof(int));
-
-	if(matriz == NULL){
-		printf("Não foi possivel alocar matriz");
-		return 0;
+		for(int i=0;i <linhas; i++){
+			for(int j=0; j<colunas; j++){
+				fscanf(file,"%d%c",&x,&y);
+				printf("%d ", x);
+				matriz[i*linhas+j] = x;
+			} 
+			printf("\n ");
+		}
 	}
-
-	for(int i=0;i <linhas; i++){
-		for(int j=0; j<colunas; j++){
-			fscanf(file,"%d%c",&x,&y);
-      		matriz[i*linhas+j] = x;
-		} 
-	}
-	
+	fclose(file);
 	return matriz;
 }
