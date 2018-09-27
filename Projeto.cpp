@@ -66,7 +66,7 @@ int main (int argc, char *argv[]){
 	printf("%d\n", *matriz);
 
 	calculaIlbp(matriz, linhas, colunas);
-
+    printf("\n");
 	puts(*treina_asfalto);
 	free(array);
 	return 0;
@@ -140,37 +140,79 @@ int *matrizAlocacada(char *caminho, int linhas, int colunas){
 }
 
 void calculaIlbp(int *matriz, int linhas, int colunas) {
-	int matrizIlbp[3][3];
-	int avg = 0;
+    int x, y;
+    x = y = 3;
+    int matrizPixels[3][3];
+    int matrizAvg[3][3];
+    int matrizIlbp[3][3];
+    //int *vetorMin[];
+	
+    int avg = 0;
 
-		for(int i = 0; i < 3; i++) {
-			for(int j = 0; j < 3; j++) {
-				matrizIlbp[i][j] = matriz[i*linhas*j];
-				avg += matrizIlbp[i][j];
-				printf("valoe= %d\n", matrizIlbp[i][j]);
+		for(int i = 0; i < x; i++) {
+			for(int j = 0; j < y; j++) {
+				matrizPixels[i][j] = matriz[i*linhas*j];
+				avg += matrizPixels[i][j];
+				//printf("valoe= %d\n", matrizIlbp[i][j]);
 			}
 		}
-		avg = avg/9;
-		printf("%d\n", avg);
-
-		for(int i = 0; i < 3; i++){
+        /*for(int i = 0; i < 3; i++) {
 			for(int j = 0; j < 3; j++) {
-				if((matrizIlbp[i][j] - avg) >= 0) {
-					matrizIlbp[i][j] = 1;
+				printf("valores= %d\n", matrizIlbp[i][j]);
+			}
+		}*/
+
+		avg = avg/9;
+		printf("AVG: %d\n", avg);
+
+		for(int i = 0; i < x; i++){
+			for(int j = 0; j < y; j++) {
+				if((matrizPixels[i][j] - avg) >= 0) {
+					matrizAvg[i][j] = 1;
 				}
 				else {
-					matrizIlbp[i][j] = 0;
+					matrizAvg[i][j] = 0;
 				}
 			}
 		}
+        
+        puts("Matriz AVG: ");
+		 for(int i = 0; i < x; i++) {
+			for(int j = 0; j < y; j++) {
+		 		printf("%d", matrizAvg[i][j]);
+		 	}
+		 }
+        puts("\n");
 
-		// for(int i = 0; i < 3; i++) {
-		// 	for(int j = 0; j < 3; j++) {
-		// 		printf("%d", matrizIlbp[i][j]);
-		// 	}
-		// }
+        for(int i = 0; i < x; i++){
+            for(int j = 0; j < y; j++){
+                
+                matrizIlbp[i][j] = matrizAvg[i][j];
 
-		// for(int j = 2; j >= 0; j--) {
+                if(i == 1 && j == 0){
+                    matrizIlbp[i][j] = matrizAvg[i+1][j+2];
+                }
+                if(i == 1 && j == 1){
+                    matrizIlbp[i][j] = matrizAvg[i+1][j];
+                }
+                if(i == 1 && j == 2){
+                    matrizIlbp[i][j] = matrizAvg[i+1][j-2];
+                }
+                if(i == 2){
+                    matrizIlbp[i][j] = matrizAvg[i-1][j];
+                }
+            }
+        }
+		
+        puts("Matriz ILBP: ");
+		 for(int i = 0; i < x; i++) {
+			for(int j = 0; j < y; j++) {
+		 		printf("%d", matrizIlbp[i][j]);
+		 	}
+		 }
+        puts("\n");
+
+        // for(int j = 2; j >= 0; j--) {
     //     for(int i = 0; i < 3; i++) {
     //            printf("%d      ", matrizIlbp[i][j]);
     //     }
