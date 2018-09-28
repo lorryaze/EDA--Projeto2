@@ -6,7 +6,7 @@
 
 int * randomizar(int );
 char* concat( char *, char *s2, char *s3);
-void contador(FILE *, int *, int *);
+void contador(char *, int *, int *);
 int *matrizAlocacada(char *, int , int );
 void calculaIlbp(int *matriz, int linhas, int colunas);
 void organizaOrdem(int *ordem,int *bin, int num);
@@ -55,7 +55,7 @@ int main (int argc, char *argv[]){
 	}
 	else{
 		printf("O arquivo foi aberto.\n");
-		contador(file, &linhas, &colunas);
+		contador(*treina_asfalto, &linhas, &colunas);
 		fclose(file);
 		matriz = matrizAlocacada(*treina_asfalto, linhas, colunas);
 	}
@@ -101,9 +101,10 @@ char* concat( char *s1,  char *s2,  char *s3)
     return result;
 }
 
-void contador(FILE *file, int *linhas, int *colunas){
+void contador(char *caminho, int *linhas, int *colunas){
     char y;
-
+  	FILE *file;
+    file = fopen(caminho,"r");
 
 	while(fscanf(file,"%c",&y) != EOF)
 	{
@@ -115,6 +116,7 @@ void contador(FILE *file, int *linhas, int *colunas){
 		if(y == '\n')
 			*linhas += 1;
 	}
+	fclose(file);
 }
 
 int *matrizAlocacada(char *caminho, int linhas, int colunas){
@@ -182,16 +184,22 @@ void calculaIlbp(int *matriz, int linhas, int colunas) {
                 matrizEspiral[i][j] = matrizBinario[i][j];
 
                 if(i == 1 && j == 0){
-                    matrizEspiral[i][j] = matrizBinario[i+1][j+2];
+                    matrizEspiral[i][j] = matrizBinario[i][j+2];
                 }
                 if(i == 1 && j == 1){
-                    matrizEspiral[i][j] = matrizBinario[i+1][j];
+                    matrizEspiral[i][j] = matrizBinario[i+1][j+1];
                 }
                 if(i == 1 && j == 2){
-                    matrizEspiral[i][j] = matrizBinario[i+1][j-2];
+                    matrizEspiral[i][j] = matrizBinario[i+1][j-1];
                 }
-                if(i == 2){
-                    matrizEspiral[i][j] = matrizBinario[i-1][j];
+                if(i == 2 && j == 0){
+                    matrizEspiral[i][j] = matrizBinario[i][j];
+                }
+                if(i == 2 && j == 1){
+                    matrizEspiral[i][j] = matrizBinario[i-1][j-1];
+                }
+                if(i == 2 && j == 2){
+                    matrizEspiral[i][j] = matrizBinario[i-1][j-1];
                 }
             }
         }
@@ -248,22 +256,6 @@ void calculaIlbp(int *matriz, int linhas, int colunas) {
 }
 
 
-      //  puts("bin");
-      //  for(int i = 0; i < indice; i++){
-      //      printf("%d", bin[i]);
-      //  }
-      //  puts("\n");
-
-      //  printf("\nDecimal Equivalent of Binary Number: %lu\n", dec);
-       
-        // for(int j = 2; j >= 0; j--) {
-    //     for(int i = 0; i < 3; i++) {
-    //            printf("%d      ", matrizIlbp[i][j]);
-    //     }
-    //     printf("%c", 10);
-		// }
-
-
 void organizaOrdem(int *ordem,int *bin, int num){
 	for(int i = 0; i<num; i++){
 		if (i == 0){
@@ -282,3 +274,4 @@ void organizaOrdem(int *ordem,int *bin, int num){
 	  }
       puts("\n");
 }
+
