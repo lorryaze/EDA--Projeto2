@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#include <limits.h>
 
 int * randomizar(int );
 char* concat( char *, char *s2, char *s3);
@@ -139,12 +140,13 @@ int *matrizAlocacada(char *caminho, int linhas, int colunas){
 	return matriz;
 }
 
-void calculaIlbp(int *matriz, int linhas, int colunas) {
+int calculaIlbp(int *matriz, int linhas, int colunas) {
+	  int teste[530];
     int x, y;
     x = y = 3;
-    long int matrizPixels[3][3];
-    long unsigned int matrizBinario[3][3];
-    long unsigned int matrizEspiral[3][3];
+    int matrizPixels[3][3];
+    int matrizBinario[3][3];
+    int matrizEspiral[3][3];
     //int *vetorMin[];
 
     int avg = 0;
@@ -173,7 +175,7 @@ void calculaIlbp(int *matriz, int linhas, int colunas) {
         puts("Matriz Binario:");
 		 for(int i = 0; i < x; i++) {
 			for(int j = 0; j < y; j++) {
-		 		printf("%lu", matrizBinario[i][j]);
+		 		printf("%d", matrizBinario[i][j]);
 		 	}
 		 }
         puts("\n");
@@ -209,7 +211,7 @@ void calculaIlbp(int *matriz, int linhas, int colunas) {
 
         for(int i = 0; i < x; i++) {
 			for(int j = 0; j < y; j++) {
-		 		printf("%lu", matrizEspiral[i][j]);
+		 		printf("%d", matrizEspiral[i][j]);
 		 	}
 		}
         puts("\n");
@@ -218,38 +220,39 @@ void calculaIlbp(int *matriz, int linhas, int colunas) {
         int indice = 0;
 
         for(int i = 0; i < x; i++) {
-			for(int j = 0; j < y; j++) {
-		 	    bin[indice] = matrizEspiral[i][j];
-                indice++;
-            }
-		}
+					for(int j = 0; j < y; j++) {
+		 	    	bin[indice] = matrizEspiral[i][j];
+            	indice++;
+          }
+				}
 
         puts("bin");
-        for(int i = 0; i < indice; i++){
-            printf("%d", bin[i]);
-        }
-        puts("\n");
+				for(int i = 0; i < indice; i++){
+				    printf("%d", bin[i]);
+				}
+				puts("\n");
 
-        unsigned long dec = 0;
-        int i = 0;
-        int s = x*y;
+				int iblpCode = 511;
+				for(int w = 0; w < 9; w++) {
 
-        //Este trecho do código converte binario pra decimal.
+	        unsigned int dec = 0;
+	        int i = 0;
+	        int s = x*y;
 
+	        //Este trecho do código converte binario pra decimal.
+	        while( s-- ) {
+	            dec = dec + pow(2, i++) * (bin[s] - 0);
+	        };
 
-        while( s-- ) {
-            dec = dec + pow(2, i++) * (bin[s] - 0);
-        };
-
-        printf("\nDecimal Equivalent of Binary Number: %lu\n", dec);
-
-
-
-
-        // for(int j = 2; j >= 0; j--) {
-    //     for(int i = 0; i < 3; i++) {
-    //            printf("%d      ", matrizIlbp[i][j]);
-    //     }
-    //     printf("%c", 10);
-		// }
+					if(dec < iblpCode) {
+						iblpCode = dec;
+						printf("\nMin: %d\n", iblpCode);
+					}
+					printf("\nDecimal Equivalent of Binary Number: %d\n", dec);
+					int temp = bin[0], k;
+					for (k = 0; k < (x*y) - 1; k++) {
+						bin[k] = bin[k + 1];
+					}
+					bin[k] = temp;
+				}
 }
