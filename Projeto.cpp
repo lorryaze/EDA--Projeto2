@@ -72,7 +72,7 @@ int main (int argc, char *argv[]){
 }
 
 int * randomizar(int n){
-	
+
    // srand(time(0));
 	int i;
     int * array = (int *) calloc (n, sizeof (int));
@@ -146,7 +146,7 @@ void calculaIlbp(int *matriz, int linhas, int colunas) {
     long unsigned int matrizBinario[3][3];
     long unsigned int matrizEspiral[3][3];
     //int *vetorMin[];
-	
+
     int avg = 0;
 
 		for(int i = 0; i < x; i++) {
@@ -169,7 +169,7 @@ void calculaIlbp(int *matriz, int linhas, int colunas) {
 				}
 			}
 		}
-        
+
         puts("Matriz Binario:");
 		 for(int i = 0; i < x; i++) {
 			for(int j = 0; j < y; j++) {
@@ -178,35 +178,42 @@ void calculaIlbp(int *matriz, int linhas, int colunas) {
 		 }
         puts("\n");
 
-        for(int i = 0; i < x; i++){
-            for(int j = 0; j < y; j++){
-                
+        for(int i = 0; i < x; i++) {
+            for(int j = 0; j < y; j++) {
+
                 matrizEspiral[i][j] = matrizBinario[i][j];
 
-                if(i == 1 && j == 0){
-                    matrizEspiral[i][j] = matrizBinario[i+1][j+2];
+                if(i == 1 && j == 0) {
+                    matrizEspiral[i][j] = matrizBinario[i][j+1];
                 }
-                if(i == 1 && j == 1){
-                    matrizEspiral[i][j] = matrizBinario[i+1][j];
+                if(i == 1 && j == 1) {
+                    matrizEspiral[i][j] = matrizBinario[i+1][j+1];
                 }
-                if(i == 1 && j == 2){
-                    matrizEspiral[i][j] = matrizBinario[i+1][j-2];
+                if(i == 1 && j == 2) {
+                    matrizEspiral[i][j] = matrizBinario[i+1][j-1];
                 }
-                if(i == 2){
-                    matrizEspiral[i][j] = matrizBinario[i-1][j];
+                if(i == 2 && j == 0) {
+                    matrizEspiral[i][j] = matrizBinario[i][j];
                 }
+								if(i == 2 && j == 1) {
+                    matrizEspiral[i][j] = matrizBinario[i-1][j-1];
+                }
+								if(i == 2 && j == 2){
+                    matrizEspiral[i][j] = matrizBinario[i-1][j-1];
+                }
+
             }
         }
-		
+
         puts("Matriz Espiral:");
-		
+
         for(int i = 0; i < x; i++) {
 			for(int j = 0; j < y; j++) {
 		 		printf("%lu", matrizEspiral[i][j]);
 		 	}
 		}
         puts("\n");
-      
+
         int bin[x*y];
         int indice = 0;
 
@@ -215,7 +222,7 @@ void calculaIlbp(int *matriz, int linhas, int colunas) {
 		 	    bin[indice] = matrizEspiral[i][j];
                 indice++;
             }
-		}     
+		}
 
         puts("bin");
         for(int i = 0; i < indice; i++){
@@ -225,20 +232,20 @@ void calculaIlbp(int *matriz, int linhas, int colunas) {
 
         unsigned long dec = 0;
         int i = 0;
-        int s = x*y; 
-        
+        int s = x*y;
+
         //Este trecho do código converte binario pra decimal.
-        
-            
+
+
         while( s-- ) {
             dec = dec + pow(2, i++) * (bin[s] - 0);
         };
-            
-        printf("\nDecimal Equivalent of Binary Number: %lu\n", dec);
-       
 
-       
-        
+        printf("\nDecimal Equivalent of Binary Number: %lu\n", dec);
+
+
+
+
         // for(int j = 2; j >= 0; j--) {
     //     for(int i = 0; i < 3; i++) {
     //            printf("%d      ", matrizIlbp[i][j]);
