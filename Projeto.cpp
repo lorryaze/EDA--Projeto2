@@ -52,28 +52,28 @@ int main (int argc, char *argv[]){
 		exit(0);
 	}
 	else{
-		printf("arquivo encontrado\n");
+		printf("O arquivo foi aberto.\n");
 		contador(file, &linhas, &colunas);
 		fclose(file);
 		matriz = matrizAlocacada(*treina_asfalto, linhas, colunas);
-
-
 	}
 
-
-	printf("%d\n", linhas);
-	printf("%d\n", colunas);
-	printf("%d\n", *matriz);
+    puts("\n");
+	printf("Número de linhas do arquivo: %d\n", linhas);
+	printf("Número de colunas do arquivo: %d\n", colunas);
+	puts("\n");
 
 	calculaIlbp(matriz, linhas, colunas);
     printf("\n");
+    printf("Nome do arquivo aberto: ");
 	puts(*treina_asfalto);
 	free(array);
 	return 0;
 }
 
 int * randomizar(int n){
-	//srand(time(0));
+	
+   // srand(time(0));
 	int i;
     int * array = (int *) calloc (n, sizeof (int));
     for (i = 0; i < n; ++i) {
@@ -142,9 +142,9 @@ int *matrizAlocacada(char *caminho, int linhas, int colunas){
 void calculaIlbp(int *matriz, int linhas, int colunas) {
     int x, y;
     x = y = 3;
-    int matrizPixels[3][3];
-    int matrizAvg[3][3];
-    int matrizIlbp[3][3];
+    long int matrizPixels[3][3];
+    long unsigned int matrizBinario[3][3];
+    long unsigned int matrizEspiral[3][3];
     //int *vetorMin[];
 	
     int avg = 0;
@@ -153,14 +153,8 @@ void calculaIlbp(int *matriz, int linhas, int colunas) {
 			for(int j = 0; j < y; j++) {
 				matrizPixels[i][j] = matriz[i*linhas*j];
 				avg += matrizPixels[i][j];
-				//printf("valoe= %d\n", matrizIlbp[i][j]);
 			}
 		}
-        /*for(int i = 0; i < 3; i++) {
-			for(int j = 0; j < 3; j++) {
-				printf("valores= %d\n", matrizIlbp[i][j]);
-			}
-		}*/
 
 		avg = avg/9;
 		printf("AVG: %d\n", avg);
@@ -168,18 +162,18 @@ void calculaIlbp(int *matriz, int linhas, int colunas) {
 		for(int i = 0; i < x; i++){
 			for(int j = 0; j < y; j++) {
 				if((matrizPixels[i][j] - avg) >= 0) {
-					matrizAvg[i][j] = 1;
+					matrizBinario[i][j] = 1;
 				}
 				else {
-					matrizAvg[i][j] = 0;
+					matrizBinario[i][j] = 0;
 				}
 			}
 		}
         
-        puts("Matriz AVG: ");
+        puts("Matriz Binario:");
 		 for(int i = 0; i < x; i++) {
 			for(int j = 0; j < y; j++) {
-		 		printf("%d", matrizAvg[i][j]);
+		 		printf("%lu", matrizBinario[i][j]);
 		 	}
 		 }
         puts("\n");
@@ -187,31 +181,64 @@ void calculaIlbp(int *matriz, int linhas, int colunas) {
         for(int i = 0; i < x; i++){
             for(int j = 0; j < y; j++){
                 
-                matrizIlbp[i][j] = matrizAvg[i][j];
+                matrizEspiral[i][j] = matrizBinario[i][j];
 
                 if(i == 1 && j == 0){
-                    matrizIlbp[i][j] = matrizAvg[i+1][j+2];
+                    matrizEspiral[i][j] = matrizBinario[i+1][j+2];
                 }
                 if(i == 1 && j == 1){
-                    matrizIlbp[i][j] = matrizAvg[i+1][j];
+                    matrizEspiral[i][j] = matrizBinario[i+1][j];
                 }
                 if(i == 1 && j == 2){
-                    matrizIlbp[i][j] = matrizAvg[i+1][j-2];
+                    matrizEspiral[i][j] = matrizBinario[i+1][j-2];
                 }
                 if(i == 2){
-                    matrizIlbp[i][j] = matrizAvg[i-1][j];
+                    matrizEspiral[i][j] = matrizBinario[i-1][j];
                 }
             }
         }
 		
-        puts("Matriz ILBP: ");
-		 for(int i = 0; i < x; i++) {
+        puts("Matriz Espiral:");
+		
+        for(int i = 0; i < x; i++) {
 			for(int j = 0; j < y; j++) {
-		 		printf("%d", matrizIlbp[i][j]);
+		 		printf("%lu", matrizEspiral[i][j]);
 		 	}
-		 }
+		}
+        puts("\n");
+      
+        int bin[x*y];
+        int indice = 0;
+
+        for(int i = 0; i < x; i++) {
+			for(int j = 0; j < y; j++) {
+		 	    bin[indice] = matrizEspiral[i][j];
+                indice++;
+            }
+		}     
+
+        puts("bin");
+        for(int i = 0; i < indice; i++){
+            printf("%d", bin[i]);
+        }
         puts("\n");
 
+        unsigned long dec = 0;
+        int i = 0;
+        int s = x*y; 
+        
+        //Este trecho do código converte binario pra decimal.
+        
+            
+        while( s-- ) {
+            dec = dec + pow(2, i++) * (bin[s] - 0);
+        };
+            
+        printf("\nDecimal Equivalent of Binary Number: %lu\n", dec);
+       
+
+       
+        
         // for(int j = 2; j >= 0; j--) {
     //     for(int i = 0; i < 3; i++) {
     //            printf("%d      ", matrizIlbp[i][j]);
