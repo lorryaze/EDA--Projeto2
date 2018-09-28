@@ -9,6 +9,7 @@ char* concat( char *, char *s2, char *s3);
 void contador(FILE *, int *, int *);
 int *matrizAlocacada(char *, int , int );
 void calculaIlbp(int *matriz, int linhas, int colunas);
+void organizaOrdem(int *ordem,int *bin, int num);
 
 int main (int argc, char *argv[]){
 	int n = 50;
@@ -46,6 +47,7 @@ int main (int argc, char *argv[]){
 
     FILE *file;
     file = fopen(*(treina_asfalto),"r");
+	printf("%s\n", treina_asfalto[0]);
 
 	if (file == NULL){
 		printf("arquivo nao encontrado");
@@ -73,7 +75,7 @@ int main (int argc, char *argv[]){
 
 int * randomizar(int n){
 	
-   // srand(time(0));
+    srand(time(0));
 	int i;
     int * array = (int *) calloc (n, sizeof (int));
     for (i = 0; i < n; ++i) {
@@ -140,18 +142,14 @@ int *matrizAlocacada(char *caminho, int linhas, int colunas){
 }
 
 void calculaIlbp(int *matriz, int linhas, int colunas) {
-    int x, y;
-    x = y = 3;
+    int x = 3, y = 3, avg = 0;
     long int matrizPixels[3][3];
-    long unsigned int matrizBinario[3][3];
-    long unsigned int matrizEspiral[3][3];
-    //int *vetorMin[];
-	
-    int avg = 0;
+    long unsigned int matrizBinario[3][3], matrizEspiral[3][3];
 
 		for(int i = 0; i < x; i++) {
 			for(int j = 0; j < y; j++) {
-				matrizPixels[i][j] = matriz[i*linhas*j];
+				matrizPixels[i][j] = matriz[i*linhas+j];
+				printf("%ld\n", matrizPixels[i][j]);
 				avg += matrizPixels[i][j];
 			}
 		}
@@ -174,13 +172,13 @@ void calculaIlbp(int *matriz, int linhas, int colunas) {
 		 for(int i = 0; i < x; i++) {
 			for(int j = 0; j < y; j++) {
 		 		printf("%lu", matrizBinario[i][j]);
-		 	}
+			}
 		 }
         puts("\n");
 
         for(int i = 0; i < x; i++){
             for(int j = 0; j < y; j++){
-                
+
                 matrizEspiral[i][j] = matrizBinario[i][j];
 
                 if(i == 1 && j == 0){
@@ -206,8 +204,8 @@ void calculaIlbp(int *matriz, int linhas, int colunas) {
 		 	}
 		}
         puts("\n");
-      
-        int bin[x*y];
+
+		int bin[x*y];
         int indice = 0;
 
         for(int i = 0; i < x; i++) {
@@ -215,34 +213,72 @@ void calculaIlbp(int *matriz, int linhas, int colunas) {
 		 	    bin[indice] = matrizEspiral[i][j];
                 indice++;
             }
-		}     
+		}
 
-        puts("bin");
-        for(int i = 0; i < indice; i++){
-            printf("%d", bin[i]);
-        }
-        puts("\n");
-
-        unsigned long dec = 0;
-        int i = 0;
-        int s = x*y; 
+		int menorSomaAtual = 0, dec = 0;
+        int i = 0, s = (x*y), num = (x*y);
         
-        //Este trecho do código converte binario pra decimal.
-        
-            
+        //Este trecho do código converte binario pra decimal. 
         while( s-- ) {
-            dec = dec + pow(2, i++) * (bin[s] - 0);
+            menorSomaAtual = menorSomaAtual + pow(2, i++) * (bin[s] - 0);
         };
-            
-        printf("\nDecimal Equivalent of Binary Number: %lu\n", dec);
-       
 
+        printf("\nDecimal Equivalent of Binary Number: %d\n", menorSomaAtual);
+
+		int ordem[x*y], m =(x*y)-1;
+
+
+		 for(int i = 0; i < 8; i++) {
+				organizaOrdem(ordem,bin,num);
+				int z =0;
+				
+				while( num-- ) {
+           			dec = dec + pow(2, z++) * (ordem[num] - 0);
+				}
+				printf("\nDecimal Equivalent of Binary Number: %d\n", dec); 
+
+				if (dec<menorSomaAtual){
+						menorSomaAtual = dec;
+					}
+
+				num = (x*y);
+		}
+
+		printf("menor valor de menor soma: %d", menorSomaAtual);
+}
+
+
+      //  puts("bin");
+      //  for(int i = 0; i < indice; i++){
+      //      printf("%d", bin[i]);
+      //  }
+      //  puts("\n");
+
+      //  printf("\nDecimal Equivalent of Binary Number: %lu\n", dec);
        
-        
         // for(int j = 2; j >= 0; j--) {
     //     for(int i = 0; i < 3; i++) {
     //            printf("%d      ", matrizIlbp[i][j]);
     //     }
     //     printf("%c", 10);
 		// }
+
+
+void organizaOrdem(int *ordem,int *bin, int num){
+	for(int i = 0; i<num; i++){
+		if (i == 0){
+			ordem[i]=bin[8];
+		}
+		else{
+			ordem[i]=bin[i-1];
+		}
+	}
+	for(int i = 0; i<num; i++){
+		bin[i]=ordem[i];
+	}
+	 puts("bin");
+     for(int i = 0; i < 9; i++){
+        printf("%d", bin[i]);
+	  }
+      puts("\n");
 }
