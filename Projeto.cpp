@@ -277,3 +277,21 @@ void vetorDeFrequenciaIlbm(int *array, int linhas, int colunas, int *arrayDeFequ
 		arrayDeFequencia[array[i]]++;
 	}
 }
+
+void normalizaVetor(int *array, int *arrayVetorNormalizado) {
+	int max = 0, min = 0;
+
+	for(int i = 0; i < sizeof(array); i++) {
+			if(min > array[i]) {
+				min = array[i];
+			}
+			if(max < array[i] ) {
+				max = array[i];
+			}
+	}
+
+	for(int j = 0; j < sizeof(array); j++) {
+		arrayVetorNormalizado[j] = (arrayVetorNormalizado[j] - min)/(max - min);
+	}
+
+}
