@@ -6,10 +6,12 @@
 #include <limits.h>
 
 int * randomizar(int );
-char* concat( char *, char *s2, char *s3);
-void contador(FILE *, int *, int *);
+char* concat( char *, char *, char *);
+void contador(char *, int *, int *);
 int *matrizAlocacada(char *, int , int );
-void calculaIlbp(int *matriz, int linhas, int colunas);
+void calculaIlbp(int *, int , int ,int *);
+void organizaOrdem(int *,int *, int );
+void vetorDeFrequenciaIlbm(int *, int , int , int *);
 
 int main (int argc, char *argv[]){
 	int n = 50;
@@ -22,6 +24,8 @@ int main (int argc, char *argv[]){
 	int linhas = 0, colunas = 1;
 
 	array = randomizar(n);
+	int * arrayDeFequencia = (int *) calloc (513, sizeof (int)); //array de frequencia do ilbp, pode ser usado direto
+	//ta sendo passado nas funções por referência.
 
 	for (int i =0; i <n; i++){
 
@@ -47,6 +51,7 @@ int main (int argc, char *argv[]){
 
     FILE *file;
     file = fopen(*(treina_asfalto),"r");
+	printf("%s\n", treina_asfalto[0]);
 
 	if (file == NULL){
 		printf("arquivo nao encontrado");
@@ -54,7 +59,7 @@ int main (int argc, char *argv[]){
 	}
 	else{
 		printf("O arquivo foi aberto.\n");
-		contador(file, &linhas, &colunas);
+		contador(*treina_asfalto, &linhas, &colunas);
 		fclose(file);
 		matriz = matrizAlocacada(*treina_asfalto, linhas, colunas);
 	}
@@ -64,17 +69,23 @@ int main (int argc, char *argv[]){
 	printf("Número de colunas do arquivo: %d\n", colunas);
 	puts("\n");
 
-	calculaIlbp(matriz, linhas, colunas);
+	calculaIlbp(matriz, linhas, colunas, arrayDeFequencia);
+
+	for(int i =0; i<513; i++){
+		printf("%d\n", arrayDeFequencia[i]);
+	}
+
     printf("\n");
     printf("Nome do arquivo aberto: ");
 	puts(*treina_asfalto);
 	free(array);
+	free(arrayDeFequencia);
 	return 0;
 }
 
 int * randomizar(int n){
 
-   // srand(time(0));
+    //srand(time(0));
 	int i;
     int * array = (int *) calloc (n, sizeof (int));
     for (i = 0; i < n; ++i) {
@@ -91,8 +102,7 @@ int * randomizar(int n){
 
 char* concat( char *s1,  char *s2,  char *s3)
 {
-    char *result = (char *)malloc(strlen(s1) + strlen(s2) + strlen(s3) +  1); // +1 for the null-terminator
-    // in real code you would check for errors in malloc here
+    char *result = (char *)malloc(strlen(s1) + strlen(s2) + strlen(s3) +  1);
     strcpy(result, s1);
     strcat(result, s2);
     strcat(result, s3);
@@ -100,9 +110,10 @@ char* concat( char *s1,  char *s2,  char *s3)
     return result;
 }
 
-void contador(FILE *file, int *linhas, int *colunas){
+void contador(char *caminho, int *linhas, int *colunas){
     char y;
-
+  	FILE *file;
+    file = fopen(caminho,"r");
 
 	while(fscanf(file,"%c",&y) != EOF)
 	{
@@ -114,6 +125,7 @@ void contador(FILE *file, int *linhas, int *colunas){
 		if(y == '\n')
 			*linhas += 1;
 	}
+	fclose(file);
 }
 
 int *matrizAlocacada(char *caminho, int linhas, int colunas){
@@ -140,26 +152,23 @@ int *matrizAlocacada(char *caminho, int linhas, int colunas){
 	return matriz;
 }
 
-int calculaIlbp(int *matriz, int linhas, int colunas) {
-	  int teste[530];
-    int x, y;
-    x = y = 3;
-    int matrizPixels[3][3];
-    int matrizBinario[3][3];
-    int matrizEspiral[3][3];
-    //int *vetorMin[];
+void calculaIlbp(int *matriz, int linhas, int colunas, int *arrayDeFequencia)  {
+    int x = 3, y = 3, avg = 0, pos =0;
+    long int matrizPixels[3][3];
+    long unsigned int matrizBinario[3][3], matrizEspiral[3][3];
+	int * arrayDeValores = (int *) calloc ((linhas-2)*(colunas-2)/9, sizeof (int));
 
-    int avg = 0;
-
-		for(int i = 0; i < x; i++) {
-			for(int j = 0; j < y; j++) {
-				matrizPixels[i][j] = matriz[i*linhas*j];
-				avg += matrizPixels[i][j];
+	for (int z = 0; z < (linhas/3); z++ ){
+		for(int w = 0; w < (colunas/3); w++){
+			avg = 0;
+			for(int i = 0; i < x; i++) {
+				for(int j = 0; j < y; j++) {
+					matrizPixels[i][j] = matriz[((i+(z*3))*linhas)+(j+(w*3))];
+					avg += matrizPixels[i][j];
 			}
 		}
 
 		avg = avg/9;
-		printf("AVG: %d\n", avg);
 
 		for(int i = 0; i < x; i++){
 			for(int j = 0; j < y; j++) {
@@ -172,32 +181,27 @@ int calculaIlbp(int *matriz, int linhas, int colunas) {
 			}
 		}
 
-        puts("Matriz Binario:");
-		 for(int i = 0; i < x; i++) {
-			for(int j = 0; j < y; j++) {
-		 		printf("%d", matrizBinario[i][j]);
-		 	}
-		 }
-        puts("\n");
-
-        for(int i = 0; i < x; i++) {
-            for(int j = 0; j < y; j++) {
+        for(int i = 0; i < x; i++){
+            for(int j = 0; j < y; j++){
 
                 matrizEspiral[i][j] = matrizBinario[i][j];
 
-                if(i == 1 && j == 0) {
-                    matrizEspiral[i][j] = matrizBinario[i][j+1];
+                if(i == 1 && j == 0){
+                    matrizEspiral[i][j] = matrizBinario[i][j+2];
                 }
-                if(i == 1 && j == 1) {
+                if(i == 1 && j == 1){
                     matrizEspiral[i][j] = matrizBinario[i+1][j+1];
                 }
-                if(i == 1 && j == 2) {
+                if(i == 1 && j == 2){
                     matrizEspiral[i][j] = matrizBinario[i+1][j-1];
                 }
-                if(i == 2 && j == 0) {
+                if(i == 2 && j == 0){
                     matrizEspiral[i][j] = matrizBinario[i][j];
                 }
-								if(i == 2 && j == 1) {
+                if(i == 2 && j == 1){
+                    matrizEspiral[i][j] = matrizBinario[i-1][j-1];
+                }
+                if(i == 2 && j == 2){
                     matrizEspiral[i][j] = matrizBinario[i-1][j-1];
                 }
 								if(i == 2 && j == 2){
@@ -207,52 +211,69 @@ int calculaIlbp(int *matriz, int linhas, int colunas) {
             }
         }
 
-        puts("Matriz Espiral:");
 
-        for(int i = 0; i < x; i++) {
-			for(int j = 0; j < y; j++) {
-		 		printf("%d", matrizEspiral[i][j]);
-		 	}
-		}
-        puts("\n");
-
-        int bin[x*y];
+		int bin[x*y];
         int indice = 0;
 
         for(int i = 0; i < x; i++) {
-					for(int j = 0; j < y; j++) {
-		 	    	bin[indice] = matrizEspiral[i][j];
-            	indice++;
-          }
+			for(int j = 0; j < y; j++) {
+		 	    bin[indice] = matrizEspiral[i][j];
+                indice++;
+            }
+		}
+
+		int menorSomaAtual = 0, dec = 0;
+        int i = 0, s = (x*y), num = (x*y);
+
+        //Este trecho do código converte binario pra decimal.
+        while( s-- ) {
+            menorSomaAtual = menorSomaAtual + pow(2, i++) * (bin[s] - 0);
+        };
+
+
+		int ordem[x*y], m =(x*y)-1;
+
+
+		 for(int i = 0; i < 8; i++) {
+				organizaOrdem(ordem,bin,num);
+				int z =0;
+
+				while( num-- ) {
+           			dec = dec + pow(2, z++) * (ordem[num] - 0);
 				}
 
-        puts("bin");
-				for(int i = 0; i < indice; i++){
-				    printf("%d", bin[i]);
-				}
-				puts("\n");
-
-				int iblpCode = 511;
-				for(int w = 0; w < 9; w++) {
-
-	        unsigned int dec = 0;
-	        int i = 0;
-	        int s = x*y;
-
-	        //Este trecho do código converte binario pra decimal.
-	        while( s-- ) {
-	            dec = dec + pow(2, i++) * (bin[s] - 0);
-	        };
-
-					if(dec < iblpCode) {
-						iblpCode = dec;
-						printf("\nMin: %d\n", iblpCode);
+				if (dec<menorSomaAtual){
+						menorSomaAtual = dec;
 					}
-					printf("\nDecimal Equivalent of Binary Number: %d\n", dec);
-					int temp = bin[0], k;
-					for (k = 0; k < (x*y) - 1; k++) {
-						bin[k] = bin[k + 1];
-					}
-					bin[k] = temp;
-				}
+
+				num = (x*y);
+		}
+
+		arrayDeValores[pos] = menorSomaAtual;
+		pos++;
+		}
+	}
+	vetorDeFrequenciaIlbm(arrayDeValores, linhas, colunas,arrayDeFequencia);
+}
+
+
+void organizaOrdem(int *ordem,int *bin, int num){
+	for(int i = 0; i<num; i++){
+		if (i == 0){
+			ordem[i]=bin[8];
+		}
+		else{
+			ordem[i]=bin[i-1];
+		}
+	}
+	for(int i = 0; i<num; i++){
+		bin[i]=ordem[i];
+	}
+}
+
+void vetorDeFrequenciaIlbm(int *array, int linhas, int colunas, int *arrayDeFequencia){
+	int b=0;
+	for (int i = 0; i <((linhas-2)*(colunas-2))/9; i++){
+		arrayDeFequencia[array[i]]++;
+	}
 }
