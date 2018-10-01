@@ -20,11 +20,12 @@ int calculaIndice(int , int , int );
 int incrementaGlcm(int *, int , int , int , int );
 int calculaMax(int *, int , int );
 void calculaGlcm(int *, int , int );
- double calculoContraste(int , int );
- double calculoEnergia(int , int );
- double calculoHomogenidade(int , int );
+double calculoContraste(int , int );
+double calculoEnergia(int , int );
+double calculoHomogenidade(int , int );
 void metricasGLCM( double * ,int );
 void printMatriz(int , int );
+void concatenaVetor(double *, int * , double *);
 
 int main (int argc, char *argv[]){
 	int n = 50;
@@ -35,11 +36,10 @@ int main (int argc, char *argv[]){
 	char *teste_grama[25];
 	int *matriz;
 	int linhas = 0, colunas = 1;
-
 	array = randomizar(n);
-	int * arrayDeFequencia = (int *) calloc (512, sizeof (int)); //array de frequencia do ilbp, pode ser usado direto
-	//ta sendo passado nas funções por referência.
-	 double *metricaGLCM = ( double *) calloc(24, sizeof( double));
+	int * arrayilbp = (int *) calloc (512, sizeof (int)); 
+	double *metricaGLCM = ( double *) calloc(24, sizeof( double));
+	double *concatenaFM = ( double *) calloc(536, sizeof( double));
 
 
 	for (int i =0; i <n; i++){
@@ -66,7 +66,6 @@ int main (int argc, char *argv[]){
 
     FILE *file;
     file = fopen(*(treina_asfalto),"r");
-	printf("%s\n", treina_asfalto[0]);
 
 	if (file == NULL){
 		printf("arquivo nao encontrado");
@@ -79,25 +78,19 @@ int main (int argc, char *argv[]){
 		matriz = matrizAlocacada(*treina_asfalto, linhas, colunas);
 	}
 
-    puts("\n");
-	printf("Número de linhas do arquivo: %d\n", linhas);
-	printf("Número de colunas do arquivo: %d\n", colunas);
-	puts("\n");
-
-	calculaIlbp(matriz, linhas, colunas, arrayDeFequencia);
+	calculaIlbp(matriz, linhas, colunas, arrayilbp);
 	calculaGlcm(matriz, linhas, colunas);
 	int maior = calculaMax(matriz,linhas,colunas);
-	printf("%d\n", maior);
-	
-	
 	metricasGLCM(metricaGLCM, maior);
+	concatenaVetor(concatenaFM, arrayilbp, metricaGLCM);
 
     printf("\n");
     printf("Nome do arquivo aberto: ");
 	puts(*treina_asfalto);
 	free(array);
-	free(arrayDeFequencia);
+	free(arrayilbp);
 	free(metricaGLCM);
+	free(concatenaFM);
 	return 0;
 }
 
@@ -170,7 +163,7 @@ int *matrizAlocacada(char *caminho, int linhas, int colunas){
 	return matriz;
 }
 
-void calculaIlbp(int *matriz, int linhas, int colunas, int *arrayDeFequencia)  {
+void calculaIlbp(int *matriz, int linhas, int colunas, int *arrayilbp)  {
     int x = 3, y = 3, avg = 0, pos =0;
      int matrizPixels[3][3];
      unsigned int matrizBinario[3][3], matrizEspiral[3][3];
@@ -267,7 +260,7 @@ void calculaIlbp(int *matriz, int linhas, int colunas, int *arrayDeFequencia)  {
 		pos++;
 		}
 	}
-	vetorDeFrequenciaIlbm(arrayDeValores, linhas, colunas,arrayDeFequencia);
+	vetorDeFrequenciaIlbm(arrayDeValores, linhas, colunas,arrayilbp);
 }
 
 
@@ -285,10 +278,10 @@ void organizaOrdem(int *ordem,int *bin, int num){
 	}
 }
 
-void vetorDeFrequenciaIlbm(int *array, int linhas, int colunas, int *arrayDeFequencia){
+void vetorDeFrequenciaIlbm(int *array, int linhas, int colunas, int *arrayilbp){
 	int b=0;
 	for (int i = 0; i <((linhas-2)*(colunas-2))/9; i++){
-		arrayDeFequencia[array[i]]++;
+		arrayilbp[array[i]]++;
 	}
 }
 int isInside(int i, int j, int linhas, int colunas){
@@ -414,4 +407,20 @@ void printMatriz(int p, int dim){
         }
         printf("\n");
     }
+}
+
+void concatenaVetor(double *concatenaFM, int *array1, double *array2){
+	printf("oi\n");
+	int tamanho = 536;
+	printf("%d\n", tamanho);
+
+	for (int i = 0; i <tamanho; i++){
+		if(i<512){
+			concatenaFM[i]=array1[i];
+		}
+		else{
+			concatenaFM[i]=array2[i-512];
+		}
+	}
+
 }
