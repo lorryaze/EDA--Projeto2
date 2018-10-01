@@ -5,8 +5,11 @@
 #include <time.h>
 #define NUMBER_DIRECTIONS 9
 #define MAX_ELEMENT 256
+#define TREINA_TESTE 25
+#define CONCATENA 536
 
 int GLCM [NUMBER_DIRECTIONS][MAX_ELEMENT][MAX_ELEMENT];
+double arrayDeMetricas[TREINA_TESTE][CONCATENA];
 
 int * randomizar(int );
 char* concat( char *, char *, char *);
@@ -26,7 +29,8 @@ double calculoHomogenidade(int , int );
 void metricasGLCM( double * ,int );
 void printMatriz(int , int );
 void concatenaVetor(double *, int * , double *);
-void normalizaVetor(double *, double *);
+void normalizaVetor(int, double *);
+void mediaAsfalto(double *);
 
 int main (int argc, char *argv[]){
 	int n = 50;
@@ -42,6 +46,8 @@ int main (int argc, char *argv[]){
 	double *metricaGLCM = ( double *) calloc(24, sizeof( double));
 	double *concatenaFM = ( double *) calloc(536, sizeof( double));
 	double *vetorNormalizado = ( double *) calloc(536, sizeof( double));
+	double *arrayDeMetricasGrama[25];
+	double *arrayDeMediaAsfalto = ( double *) calloc(536, sizeof( double));;
 
 
 	for (int i =0; i <n; i++){
@@ -66,30 +72,29 @@ int main (int argc, char *argv[]){
 			}
 	}
 
-    FILE *file;
-    file = fopen(*(treina_asfalto),"r");
+	contador(treina_asfalto[0], &linhas, &colunas);
+	
 
-	if (file == NULL){
-		printf("arquivo nao encontrado");
-		exit(0);
+	for (int j = 0; j < 25; j++){
+		matriz = matrizAlocacada(treina_asfalto[j], linhas, colunas);
+		calculaIlbp(matriz, linhas, colunas, arrayilbp);
+
+		printf("\n");
+  		printf("Nome do arquivo aberto: ");
+		puts(treina_asfalto[j]);
+
+		calculaGlcm(matriz, linhas, colunas);
+		int maior = calculaMax(matriz,linhas,colunas);
+		metricasGLCM(metricaGLCM, maior);
+		concatenaVetor(concatenaFM, arrayilbp, metricaGLCM);
+		normalizaVetor(j, concatenaFM);
+		free(matriz);
 	}
-	else{
-		printf("O arquivo foi aberto.\n");
-		contador(*treina_asfalto, &linhas, &colunas);
-		fclose(file);
-		matriz = matrizAlocacada(*treina_asfalto, linhas, colunas);
-	}
 
-	calculaIlbp(matriz, linhas, colunas, arrayilbp);
-	calculaGlcm(matriz, linhas, colunas);
-	int maior = calculaMax(matriz,linhas,colunas);
-	metricasGLCM(metricaGLCM, maior);
-	concatenaVetor(concatenaFM, arrayilbp, metricaGLCM);
-	normalizaVetor(vetorNormalizado, concatenaFM);
+	mediaAsfalto(arrayDeMediaAsfalto);
 
-  printf("\n");
-  printf("Nome do arquivo aberto: ");
-	puts(*treina_asfalto);
+
+
 	free(array);
 	free(arrayilbp);
 	free(metricaGLCM);
@@ -99,7 +104,7 @@ int main (int argc, char *argv[]){
 
 int * randomizar(int n){
 
-   // srand(time(0));
+    //srand(time(0));
 	int i;
     int * array = (int *) calloc (n, sizeof (int));
     for (i = 0; i < n; ++i) {
@@ -360,7 +365,7 @@ void calculaGlcm(int *matriz, int linhas, int colunas){
 			contraste += (pow((i-j),2)* GLCM[p][i][j]);
 		}
 	}
-	printf("contrastes : %lf\n", contraste);
+	//printf("contrastes : %lf\n", contraste);
 	return contraste;
 }
 
@@ -372,7 +377,7 @@ double calculoEnergia(int p, int dim){
 			energia +=  pow(GLCM[p][i][j],2);
 		}
 	}
-	printf("energias : %lf\n", energia);
+	//printf("energias : %lf\n", energia);
 	return energia;
 }
 
@@ -384,7 +389,7 @@ double calculoHomogenidade(int p, int dim){
 			homogenidade += (GLCM[p][i][j]/(1+abs(i-j)));
 		}
 	}
-	printf("homogenidades : %lf\n", homogenidade);
+	//printf("homogenidades : %lf\n", homogenidade);
 	return homogenidade;
 }
 
@@ -406,16 +411,6 @@ void metricasGLCM(double * metricaGLCM,int maior){
 
 }
 
-void printMatriz(int p, int dim){
-
-    for(int i = 1; i <= dim; i++){
-        for(int j = 1; j <= dim; j++){
-            printf(" %d", GLCM[p][i][j]);
-        }
-        printf("\n");
-    }
-}
-
 void concatenaVetor(double *concatenaFM, int *array1, double *array2){
 	int tamanho = 536;
 	for (int i = 0; i <tamanho; i++){
@@ -427,9 +422,10 @@ void concatenaVetor(double *concatenaFM, int *array1, double *array2){
 		}
 	}
 }
-void normalizaVetor(double *vetorNormalizado, double *concatenaFM) {
+void normalizaVetor(int k, double *concatenaFM) {
 	int max = 0, min = 0;
 
+	double *vetorNormalizado = (double *) calloc (536, sizeof(double));
 	for(int i = 0; i < 536; i++) {
 			if(min > concatenaFM[i]) {
 				min = concatenaFM[i];
@@ -441,5 +437,25 @@ void normalizaVetor(double *vetorNormalizado, double *concatenaFM) {
 
 	for(int j = 0; j < 536; j++) {
 		vetorNormalizado[j] = (concatenaFM[j] - min)/(max - min);
+		arrayDeMetricas[k][j] = vetorNormalizado[j];
+		//printf("array de metrica %d: %.10lf\n",k, arrayDeMetricas[k][j]);
+	}
+}
+
+void mediaAsfalto(double *arrayMedia){
+
+	double *arrayMediaAsfalto = (double *) calloc (536,sizeof(double));
+	double array=0;
+	double media=0;
+	for (int i = 0; i <536; i++){
+		array = 0;
+		media = 0;
+		for (int j=0; j < 25; j++){
+			array += arrayDeMetricas[j][i];
+					
+		}	
+		media = array/25;
+		arrayMedia[i]= media;
+		printf("O array da media na posição %d e: %.10lf\n", i, arrayMedia[i]);
 	}
 }
