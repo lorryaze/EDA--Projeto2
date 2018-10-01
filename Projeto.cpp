@@ -26,6 +26,7 @@ double calculoHomogenidade(int , int );
 void metricasGLCM( double * ,int );
 void printMatriz(int , int );
 void concatenaVetor(double *, int * , double *);
+void normalizaVetor(double *, double *);
 
 int main (int argc, char *argv[]){
 	int n = 50;
@@ -84,6 +85,7 @@ int main (int argc, char *argv[]){
 	int maior = calculaMax(matriz,linhas,colunas);
 	metricasGLCM(metricaGLCM, maior);
 	concatenaVetor(concatenaFM, arrayilbp, metricaGLCM);
+	normalizaVetor(vetorNormalizado, concatenaFM);
 
   printf("\n");
   printf("Nome do arquivo aberto: ");
@@ -416,8 +418,6 @@ void printMatriz(int p, int dim){
 
 void concatenaVetor(double *concatenaFM, int *array1, double *array2){
 	int tamanho = 536;
-	printf("%d\n", tamanho);
-
 	for (int i = 0; i <tamanho; i++){
 		if(i<512){
 			concatenaFM[i]=array1[i];
@@ -426,5 +426,20 @@ void concatenaVetor(double *concatenaFM, int *array1, double *array2){
 			concatenaFM[i]=array2[i-512];
 		}
 	}
+}
+void normalizaVetor(double *vetorNormalizado, double *concatenaFM) {
+	int max = 0, min = 0;
 
+	for(int i = 0; i < 536; i++) {
+			if(min > concatenaFM[i]) {
+				min = concatenaFM[i];
+			}
+			if(max < concatenaFM[i] ) {
+				max = concatenaFM[i];
+			}
+	}
+
+	for(int j = 0; j < 536; j++) {
+		vetorNormalizado[j] = (concatenaFM[j] - min)/(max - min);
+	}
 }
