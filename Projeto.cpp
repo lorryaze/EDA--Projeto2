@@ -3,14 +3,10 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
-<<<<<<< HEAD
-#include <limits.h>
-=======
 #define NUMBER_DIRECTIONS 9
 #define MAX_ELEMENT 256
 
 int GLCM [NUMBER_DIRECTIONS][MAX_ELEMENT][MAX_ELEMENT];
->>>>>>> 055668b195dc13377c4e56cd32e4462f875c0b64
 
 int * randomizar(int );
 char* concat( char *, char *, char *);
@@ -24,6 +20,11 @@ int calculaIndice(int , int , int );
 int incrementaGlcm(int *, int , int , int , int );
 int calculaMax(int *, int , int );
 void calculaGlcm(int *, int , int );
+long double calculoContraste(int , int );
+long double calculoEnergia(int , int );
+long double calculoHomogenidade(int , int );
+void metricasGLCM(long double * ,int );
+void printMatriz(int , int );
 
 int main (int argc, char *argv[]){
 	int n = 50;
@@ -36,8 +37,10 @@ int main (int argc, char *argv[]){
 	int linhas = 0, colunas = 1;
 
 	array = randomizar(n);
-	int * arrayDeFequencia = (int *) calloc (513, sizeof (int)); //array de frequencia do ilbp, pode ser usado direto
+	int * arrayDeFequencia = (int *) calloc (512, sizeof (int)); //array de frequencia do ilbp, pode ser usado direto
 	//ta sendo passado nas funções por referência.
+	long double *metricaGLCM = (long double *) calloc(24, sizeof(long double));
+
 
 	for (int i =0; i <n; i++){
 
@@ -83,11 +86,16 @@ int main (int argc, char *argv[]){
 
 	calculaIlbp(matriz, linhas, colunas, arrayDeFequencia);
 
-	for(int i =0; i<513; i++){
-		printf("%d\n", arrayDeFequencia[i]);
+	for(int i =0; i<512; i++){
+		printf("%d : %d\n", i, arrayDeFequencia[i]);
 	}
 
 	calculaGlcm(matriz, linhas, colunas);
+	int maior = calculaMax(matriz,linhas,colunas);
+	printf("%d", maior);
+
+
+	//metricasGLCM(metricaGLCM, maior);
 
     printf("\n");
     printf("Nome do arquivo aberto: ");
@@ -351,4 +359,68 @@ void calculaGlcm(int *matriz, int linhas, int colunas){
 			incrementaGlcm(matriz, i, j, linhas, colunas);
 		}
 	}
+}
+
+long double calculoContraste(int p, int dim){
+	double contraste=0;
+	for(int i = 1; i <= dim; i++){
+		for(int j = 1; j <= dim; j++){
+			contraste += contraste + (pow((i-j),2)* GLCM[p][i][j]);
+		}
+	}
+	printf("contrastes : %lf\n", contraste);
+	return contraste;
+}
+
+
+long double calculoEnergia(int p, int dim){
+	double energia=0;
+	for(int i = 1; i <= dim; i++){
+		for(int j = 1; j <= dim; j++){
+			energia += energia + pow(GLCM[p][i][j],2);
+		}
+	}
+	//printf("energias : %lf\n", energia);
+	return energia;
+}
+
+long double calculoHomogenidade(int p, int dim){
+	double homogenidade=0;
+
+	for(int i = 1; i <= dim; i++){
+		for(int j = 1; j <= dim; j++){
+			int num = abs(i-j) ;
+			homogenidade += homogenidade + (GLCM[p][i][j]/(1+num));
+		}
+	}
+	//printf("homogenidades : %lf\n", homogenidade);
+	return homogenidade;
+}
+
+
+void metricasGLCM(long double * metricaGLCM,int maior){
+
+	for (int i = 0; i < 24; i++){
+		if (i<8){
+			metricaGLCM[i]= calculoContraste(i,maior);
+		}
+		if(i >= 8 && i < 16){
+			metricaGLCM[i]= calculoEnergia(i-8, maior);
+		}
+		if(i>=16 && i<24){
+			metricaGLCM[i]= calculoHomogenidade(i-16, maior);
+		}
+
+	}
+
+}
+
+void printMatriz(int p, int dim){
+
+    for(int i = 1; i <= dim; i++){
+        for(int j = 1; j <= dim; j++){
+            printf(" %d", GLCM[p][i][j]);
+        }
+        printf("\n");
+    }
 }
