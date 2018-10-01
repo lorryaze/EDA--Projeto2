@@ -3,7 +3,14 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+<<<<<<< HEAD
 #include <limits.h>
+=======
+#define NUMBER_DIRECTIONS 9
+#define MAX_ELEMENT 256
+
+int GLCM [NUMBER_DIRECTIONS][MAX_ELEMENT][MAX_ELEMENT];
+>>>>>>> 055668b195dc13377c4e56cd32e4462f875c0b64
 
 int * randomizar(int );
 char* concat( char *, char *, char *);
@@ -12,6 +19,11 @@ int *matrizAlocacada(char *, int , int );
 void calculaIlbp(int *, int , int ,int *);
 void organizaOrdem(int *,int *, int );
 void vetorDeFrequenciaIlbm(int *, int , int , int *);
+int isInside(int , int , int , int );
+int calculaIndice(int , int , int );
+int incrementaGlcm(int *, int , int , int , int );
+int calculaMax(int *, int , int );
+void calculaGlcm(int *, int , int );
 
 int main (int argc, char *argv[]){
 	int n = 50;
@@ -74,6 +86,8 @@ int main (int argc, char *argv[]){
 	for(int i =0; i<513; i++){
 		printf("%d\n", arrayDeFequencia[i]);
 	}
+
+	calculaGlcm(matriz, linhas, colunas);
 
     printf("\n");
     printf("Nome do arquivo aberto: ");
@@ -234,19 +248,19 @@ void calculaIlbp(int *matriz, int linhas, int colunas, int *arrayDeFequencia)  {
 		int ordem[x*y], m =(x*y)-1;
 
 
-		 for(int i = 0; i < 8; i++) {
-				organizaOrdem(ordem,bin,num);
-				int z =0;
+		for(int i = 0; i < 8; i++) {
+			organizaOrdem(ordem,bin,num);
+			int z =0;
 
-				while( num-- ) {
-           			dec = dec + pow(2, z++) * (ordem[num] - 0);
+			while( num-- ) {
+           		dec = dec + pow(2, z++) * (ordem[num] - 0);
+			}
+
+			if (dec<menorSomaAtual){
+					menorSomaAtual = dec;
 				}
 
-				if (dec<menorSomaAtual){
-						menorSomaAtual = dec;
-					}
-
-				num = (x*y);
+			num = (x*y);
 		}
 
 		arrayDeValores[pos] = menorSomaAtual;
@@ -275,5 +289,66 @@ void vetorDeFrequenciaIlbm(int *array, int linhas, int colunas, int *arrayDeFequ
 	int b=0;
 	for (int i = 0; i <((linhas-2)*(colunas-2))/9; i++){
 		arrayDeFequencia[array[i]]++;
+	}
+}
+int isInside(int i, int j, int linhas, int colunas){
+
+	if(i >= 0 && i < linhas && j >= 0 && j < colunas){
+		return 1;
+	}
+	else{
+		return 0;
+	}
+}
+int calculaIndice(int i, int j, int colunas){
+	int indice = (i*colunas+j);
+	return indice;
+}
+int incrementaGlcm(int *matriz, int i, int j, int linhas, int colunas){
+	int indice_x = calculaIndice(i, j, colunas);
+	int x = matriz[indice_x]; //elemento sendo analizado
+
+	//esse for acha o y
+	for(int a = -1; a <= 1; a++){
+		for(int b = -1; b <= 1; b++){
+			if(a == 0 && b == 0)
+				continue;
+
+			int i_y = i+a;
+			int j_y = j+b;
+
+			int n = isInside(i_y, j_y, linhas, colunas);
+			if(n == 0)
+				continue;
+			int m = calculaIndice(i_y, j_y, colunas);
+			int y = matriz[m]; // y é a minha vizinhaça
+			int p = calculaIndice(a+1, b+1, 3);
+
+			GLCM[p][x][y]++;
+		}
+	}
+}
+int calculaMax(int *matriz, int linhas, int colunas){
+
+	int maior = 0;
+	int tamanho = linhas*colunas;
+
+	for(int i=0;i < tamanho; i++){
+
+		if(matriz[i] > maior){
+			maior = matriz[i];
+		}
+	}
+	return maior;
+
+}
+void calculaGlcm(int *matriz, int linhas, int colunas){
+
+	int maior = calculaMax(matriz, linhas, colunas);
+
+	for(int i = 0; i < linhas; i++){
+		for(int j = 0; j < colunas; j++){
+			incrementaGlcm(matriz, i, j, linhas, colunas);
+		}
 	}
 }
