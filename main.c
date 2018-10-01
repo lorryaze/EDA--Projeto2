@@ -24,9 +24,9 @@ int main(){
 	double *metricaGLCM = (double *) calloc(24, sizeof(double));
 
     int *matriz = (int *) calloc(n , sizeof(int));
-    int arr[] = {1, 2, 3,
+    int arr[] = {1, 2,3 ,
                 1, 2, 3,
-                2, 1, 2};
+                2, 1, 3};
     
     matriz = arr;
     for(int i = 0; i < n; i++){
@@ -48,6 +48,7 @@ int main(){
 
 	}
 
+	
 	
 
     printMatriz(0, maior);
@@ -135,7 +136,8 @@ double calculoContraste(int p, int dim){
 	double contraste=0;
 	for(int i = 1; i <= dim; i++){
 		for(int j = 1; j <= dim; j++){
-			contraste += contraste + (pow((i-j),2)* GLCM[p][i][j]);
+			contraste += (pow(abs(i-j),2)* GLCM[p][i][j]);
+			//printf("contraste %d%d: %lf\n",i,j,contraste);
 		}
 	}
 	printf("contrastes : %lf\n", contraste);
@@ -145,9 +147,9 @@ double calculoContraste(int p, int dim){
 
 double calculoEnergia(int p, int dim){
 	double energia=0;
-	for(int i = 1; i <= dim; i++){
-		for(int j = 1; j <= dim; j++){
-			energia += energia + pow(GLCM[p][i][j],2);
+	for(int i = 0; i < dim; i++){
+		for(int j = 0; j <= dim; j++){
+			energia += pow(GLCM[p][i][j],2);
 		}
 	}
 	printf("energias : %lf\n", energia);
@@ -157,10 +159,10 @@ double calculoEnergia(int p, int dim){
 double calculoHomogenidade(int p, int dim){
 	double homogenidade=0;
 	
-	for(int i = 1; i <= dim; i++){
-		for(int j = 1; j <= dim; j++){
+	for(int i = 0; i < dim; i++){
+		for(int j = 0; j < dim; j++){
 			int num = abs(i-j) ;
-			homogenidade += homogenidade + (GLCM[p][i][j]/(1+num));
+			homogenidade += (GLCM[p][i][j]/(1+num));
 		}
 	}
 	printf("homogenidades : %lf\n", homogenidade);
