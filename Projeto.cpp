@@ -31,6 +31,7 @@ void printMatriz(int , int );
 void concatenaVetor(double *, int * , double *);
 void normalizaVetor(int, double *);
 void mediaAsfalto(double *);
+void euclidiana (int , double *, double *);
 
 int main (int argc, char *argv[]){
 	int n = 50;
@@ -47,7 +48,8 @@ int main (int argc, char *argv[]){
 	double *concatenaFM = ( double *) calloc(536, sizeof( double));
 	double *vetorNormalizado = ( double *) calloc(536, sizeof( double));
 	double *arrayDeMetricasGrama[25];
-	double *arrayDeMediaAsfalto = ( double *) calloc(536, sizeof( double));;
+	double *arrayDeMediaAsfalto = ( double *) calloc(536, sizeof( double));
+	double *arrayDeMediaGrama = ( double *) calloc(536, sizeof( double));
 
 
 	for (int i =0; i <n; i++){
@@ -79,9 +81,9 @@ int main (int argc, char *argv[]){
 		matriz = matrizAlocacada(treina_asfalto[j], linhas, colunas);
 		calculaIlbp(matriz, linhas, colunas, arrayilbp);
 
-		printf("\n");
+		/*printf("\n");
   		printf("Nome do arquivo aberto: ");
-		puts(treina_asfalto[j]);
+		puts(treina_asfalto[j]);*/
 
 		calculaGlcm(matriz, linhas, colunas);
 		int maior = calculaMax(matriz,linhas,colunas);
@@ -91,7 +93,42 @@ int main (int argc, char *argv[]){
 		free(matriz);
 	}
 
+
+
 	mediaAsfalto(arrayDeMediaAsfalto);
+
+	for (int j = 0; j < 25; j++){
+		matriz = matrizAlocacada(treina_grama[j], linhas, colunas);
+		calculaIlbp(matriz, linhas, colunas, arrayilbp);
+
+		/*printf("\n");
+  		printf("Nome do arquivo aberto: ");
+		puts(treina_grama[j]);*/
+
+		calculaGlcm(matriz, linhas, colunas);
+		int maior = calculaMax(matriz,linhas,colunas);
+		metricasGLCM(metricaGLCM, maior);
+		concatenaVetor(concatenaFM, arrayilbp, metricaGLCM);
+		normalizaVetor(j, concatenaFM);
+		free(matriz);
+	}
+	
+	mediaAsfalto(arrayDeMediaGrama);
+
+	matriz = matrizAlocacada(teste_asfalto[0], linhas, colunas);
+	calculaIlbp(matriz, linhas, colunas, arrayilbp);
+
+	printf("\n");
+  	printf("Nome do arquivo aberto: ");
+	puts(teste_asfalto[0]);
+
+	calculaGlcm(matriz, linhas, colunas);
+	int maior = calculaMax(matriz,linhas,colunas);
+	metricasGLCM(metricaGLCM, maior);
+	concatenaVetor(concatenaFM, arrayilbp, metricaGLCM);
+	normalizaVetor(0, concatenaFM);
+	euclidiana (0, arrayDeMediaAsfalto, arrayDeMediaGrama);
+	
 
 
 
@@ -104,7 +141,7 @@ int main (int argc, char *argv[]){
 
 int * randomizar(int n){
 
-    //srand(time(0));
+    srand(time(0));
 	int i;
     int * array = (int *) calloc (n, sizeof (int));
     for (i = 0; i < n; ++i) {
@@ -456,6 +493,47 @@ void mediaAsfalto(double *arrayMedia){
 		}	
 		media = array/25;
 		arrayMedia[i]= media;
-		printf("O array da media na posição %d e: %.10lf\n", i, arrayMedia[i]);
+		//printf("O array da media na posição %d e: %.10lf\n", i, arrayMedia[i]);
 	}
+}
+
+void euclidiana (int k, double *arrayAsphalto, double *arrayGrama){
+	double distancia1 = 0 ;
+	double distancia2 = 0 ;
+	double soma;
+	double quadrado;
+	
+	printf("array metria 0: %.10lf", arrayDeMetricas[0][5]);
+	printf("array asfalto 0: %.10lf", arrayAsphalto[5]);
+
+	soma = arrayDeMetricas[0][5] - arrayAsphalto[5];
+		quadrado += pow(soma,2);		
+		printf("%.10lf", quadrado);
+
+	/*for (int i =0; i<536; i++){
+		soma = arrayDeMetricas[k][i] - arrayAsphalto[i];
+		quadrado += pow(soma,2);		
+		//printf("%.10lf", quadrado);
+	}
+	distancia1 = sqrt(quadrado);
+	soma = 0;
+	quadrado = 0;
+	printf("A distancia 1 e : %.10lf\n", distancia1);
+
+	for (int i =0; i<536; i++){
+		soma = arrayDeMetricas[k][i] - arrayGrama[i];
+		quadrado += pow(soma,2);		
+	}
+	distancia2 = sqrt(quadrado);
+	printf("A distancia 2 e : %.10lf\n", distancia2);
+	if (distancia1<distancia2){
+		printf("Ele é asfalto");
+	}
+	else if(distancia1 == distancia2){
+		printf("inconclusivo");
+	}
+	else{
+		printf("Ele é grama");
+	}*/
+		
 }
