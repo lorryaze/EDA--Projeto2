@@ -1,3 +1,8 @@
+//Mikhaelle Bueno - 150018673
+//Lorrany dos Santos Azevedo - 160132550
+//Martha Dantas - 140154671
+
+
 #include <stdio.h>
 #include <math.h>
 #include <stdlib.h>
@@ -31,7 +36,8 @@ void printMatriz(int , int );
 void concatenaVetor(double *, int * , double *);
 void normalizaVetor(int, double *);
 void mediaAsfalto(double *);
-void euclidiana (int , double *, double *);
+int *euclidiana (int , double *, double *);
+void limpar ( );
 
 int main (int argc, char *argv[]){
 	int n = 50;
@@ -43,13 +49,15 @@ int main (int argc, char *argv[]){
 	int *matriz;
 	int linhas = 0, colunas = 1;
 	array = randomizar(n);
-	int * arrayilbp = (int *) calloc (512, sizeof (int));
-	double *metricaGLCM = ( double *) calloc(24, sizeof( double));
-	double *concatenaFM = ( double *) calloc(536, sizeof( double));
 	double *vetorNormalizado = ( double *) calloc(536, sizeof( double));
 	double *arrayDeMetricasGrama[25];
 	double *arrayDeMediaAsfalto = ( double *) calloc(536, sizeof( double));
 	double *arrayDeMediaGrama = ( double *) calloc(536, sizeof( double));
+	int maior = 0; 
+	int *asfalto_grama = 0;
+	int Acerto=0;
+	int falsaAceitacao = 0;
+	int falsaRejeicao = 0;
 
 
 	for (int i =0; i <n; i++){
@@ -74,68 +82,129 @@ int main (int argc, char *argv[]){
 			}
 	}
 
-	contador(treina_asfalto[0], &linhas, &colunas);
-	
+	contador(treina_asfalto[0], &linhas, &colunas); // funcao q conta quantas linhas e colunas
+	double *concatenaFM = ( double *) calloc(536, sizeof( double));
 
 	for (int j = 0; j < 25; j++){
+		int * arrayilbp = (int *) calloc (512, sizeof (int));
+		double *metricaGLCM = ( double *) calloc(24, sizeof( double));
+		
 		matriz = matrizAlocacada(treina_asfalto[j], linhas, colunas);
 		calculaIlbp(matriz, linhas, colunas, arrayilbp);
 
-		/*printf("\n");
+		printf("\n");
   		printf("Nome do arquivo aberto: ");
-		puts(treina_asfalto[j]);*/
+		puts(treina_asfalto[j]);
 
 		calculaGlcm(matriz, linhas, colunas);
-		int maior = calculaMax(matriz,linhas,colunas);
+		maior = calculaMax(matriz,linhas,colunas);
 		metricasGLCM(metricaGLCM, maior);
 		concatenaVetor(concatenaFM, arrayilbp, metricaGLCM);
 		normalizaVetor(j, concatenaFM);
 		free(matriz);
+		free(arrayilbp);
+		free(metricaGLCM);
 	}
 
-
-
 	mediaAsfalto(arrayDeMediaAsfalto);
+	limpar();
+	//limpar arrayilbp, metricaGLCM,concatenaFm,arrayDeMetricas e GLCM
 
 	for (int j = 0; j < 25; j++){
+		int * arrayilbp = (int *) calloc (512, sizeof (int));
+		double *metricaGLCM = ( double *) calloc(24, sizeof( double));
 		matriz = matrizAlocacada(treina_grama[j], linhas, colunas);
 		calculaIlbp(matriz, linhas, colunas, arrayilbp);
 
-		/*printf("\n");
+		printf("\n");
   		printf("Nome do arquivo aberto: ");
-		puts(treina_grama[j]);*/
+		puts(treina_grama[j]);
 
 		calculaGlcm(matriz, linhas, colunas);
-		int maior = calculaMax(matriz,linhas,colunas);
+		maior = calculaMax(matriz,linhas,colunas);
 		metricasGLCM(metricaGLCM, maior);
 		concatenaVetor(concatenaFM, arrayilbp, metricaGLCM);
 		normalizaVetor(j, concatenaFM);
 		free(matriz);
+		free(arrayilbp);
+		free(metricaGLCM);
 	}
 	
 	mediaAsfalto(arrayDeMediaGrama);
+	limpar();
+	//impar(arrayilbp, metricaGLCM, concatenaFM, linhas, colunas);
 
-	matriz = matrizAlocacada(teste_asfalto[0], linhas, colunas);
-	calculaIlbp(matriz, linhas, colunas, arrayilbp);
+	for (int j = 0; j < 25; j++){
+		matriz = matrizAlocacada(teste_asfalto[j], linhas, colunas);
+		int * arrayilbp = (int *) calloc (512, sizeof (int));
+		double *metricaGLCM = ( double *) calloc(24, sizeof( double));
+		calculaIlbp(matriz, linhas, colunas, arrayilbp);
 
-	printf("\n");
-  	printf("Nome do arquivo aberto: ");
-	puts(teste_asfalto[0]);
+		printf("\n");
+		printf("Nome do arquivo aberto: ");
+		puts(teste_asfalto[j]);
 
-	calculaGlcm(matriz, linhas, colunas);
-	int maior = calculaMax(matriz,linhas,colunas);
-	metricasGLCM(metricaGLCM, maior);
-	concatenaVetor(concatenaFM, arrayilbp, metricaGLCM);
-	normalizaVetor(0, concatenaFM);
-	euclidiana (0, arrayDeMediaAsfalto, arrayDeMediaGrama);
-	
+		calculaGlcm(matriz, linhas, colunas);
+		maior = calculaMax(matriz,linhas,colunas);
+		metricasGLCM(metricaGLCM, maior);
+		concatenaVetor(concatenaFM, arrayilbp, metricaGLCM);
+		normalizaVetor(0, concatenaFM);
+		asfalto_grama = euclidiana (0, arrayDeMediaAsfalto, arrayDeMediaGrama);
+		
+		if (asfalto_grama[0] == 1){
+			Acerto +=1;
+		}
+		else{
+			falsaAceitacao +=1;
+		}
+		free(matriz);
+		free(arrayilbp);
+		free(metricaGLCM);
+	}
 
 
+	limpar();
+	//impar(arrayilbp, metricaGLCM, concatenaFM, linhas, colunas);
+
+	for (int j = 0; j < 25; j++){
+		matriz = matrizAlocacada(teste_grama[j], linhas, colunas);
+		int * arrayilbp = (int *) calloc (512, sizeof (int));
+		double *metricaGLCM = ( double *) calloc(24, sizeof( double));
+		calculaIlbp(matriz, linhas, colunas, arrayilbp);
+
+		printf("\n");
+		printf("Nome do arquivo aberto: ");
+		puts(teste_grama[j]);
+
+		calculaGlcm(matriz, linhas, colunas);
+		maior = calculaMax(matriz,linhas,colunas);
+		metricasGLCM(metricaGLCM, maior);
+		concatenaVetor(concatenaFM, arrayilbp, metricaGLCM);
+		normalizaVetor(0, concatenaFM);
+		asfalto_grama = euclidiana (0, arrayDeMediaAsfalto, arrayDeMediaGrama);
+
+		if (asfalto_grama[0] == 1){
+			falsaRejeicao+=1;
+		}
+		else{
+			Acerto +=1;
+		}
+
+		free(matriz);
+		free(arrayilbp);
+		free(metricaGLCM);
+	}
+	Acerto = (100*Acerto)/50;
+	falsaAceitacao = (100*falsaAceitacao)/25;
+	falsaRejeicao= (100*falsaRejeicao)/25;
+
+	printf("A taxa de acerto foi de %d porcento\n", Acerto);
+	printf("A taxa de falsa aceitacao foi de %d porcento\n", falsaAceitacao);
+	printf("A taxa de falsa rejeicao foi de %d porcento\n", falsaRejeicao);
 
 	free(array);
-	free(arrayilbp);
-	free(metricaGLCM);
 	free(concatenaFM);
+
 	return 0;
 }
 
@@ -497,43 +566,61 @@ void mediaAsfalto(double *arrayMedia){
 	}
 }
 
-void euclidiana (int k, double *arrayAsphalto, double *arrayGrama){
+int *euclidiana (int k, double *arrayAsphalto, double *arrayGrama){
 	double distancia1 = 0 ;
 	double distancia2 = 0 ;
 	double soma;
 	double quadrado;
-	
-	printf("array metria 0: %.10lf", arrayDeMetricas[0][5]);
-	printf("array asfalto 0: %.10lf", arrayAsphalto[5]);
+	int *asfalto_grama = (int *) calloc (2, sizeof(int));
 
-	soma = arrayDeMetricas[0][5] - arrayAsphalto[5];
-		quadrado += pow(soma,2);		
-		printf("%.10lf", quadrado);
 
-	/*for (int i =0; i<536; i++){
+	for (int i =0; i<536; i++){
 		soma = arrayDeMetricas[k][i] - arrayAsphalto[i];
 		quadrado += pow(soma,2);		
-		//printf("%.10lf", quadrado);
+		//printf("%.10lf\n", quadrado);
 	}
 	distancia1 = sqrt(quadrado);
 	soma = 0;
 	quadrado = 0;
-	printf("A distancia 1 e : %.10lf\n", distancia1);
+	//printf("A distancia 1 e : %.10lf\n", distancia1);
 
 	for (int i =0; i<536; i++){
 		soma = arrayDeMetricas[k][i] - arrayGrama[i];
 		quadrado += pow(soma,2);		
 	}
 	distancia2 = sqrt(quadrado);
-	printf("A distancia 2 e : %.10lf\n", distancia2);
+//	printf("A distancia 2 e : %.10lf\n", distancia2);
 	if (distancia1<distancia2){
-		printf("Ele é asfalto");
+		asfalto_grama[0] =1;
+		asfalto_grama[1] = 0;
+	//	printf("Ele é asfalto\n");
 	}
 	else if(distancia1 == distancia2){
-		printf("inconclusivo");
+	//	printf("inconclusivo");
 	}
 	else{
-		printf("Ele é grama");
-	}*/
+		asfalto_grama[0] =0;
+		asfalto_grama[1] =1;
+	//	printf("Ele é grama\n");
 		
+	}
+	return(asfalto_grama);
+}
+
+void limpar (){
+	for (int i = 0; i <9; i++){
+		for (int j = 0; j <256; j++){
+			for (int k = 0; k <256; k++){
+			GLCM [i][j][k] = 0;
+			}
+
+		}
+	}
+	for (int j = 0; j <25; j++){
+		for (int k = 0; k <356; k++){
+			 arrayDeMetricas[j][k] = 0;
+		}
+
+	}
+
 }
